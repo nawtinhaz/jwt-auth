@@ -1,2 +1,2 @@
 # jwt-auth
-Clean and simples authentication microservice written in Go.
+Clean and simple authentication microservice written in Go.
