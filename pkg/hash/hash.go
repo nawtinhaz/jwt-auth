@@ -8,9 +8,11 @@ import (
 	"golang.org/x/crypto/scrypt"
 )
 
+const digestSize = 64
+
 // Keygen generates a cryptographically secure key of given size.
-func Keygen(size int) ([]byte, error) {
-	key := make([]byte, size)
+func Keygen() ([]byte, error) {
+	key := make([]byte, digestSize)
 
 	if _, err := rand.Read(key); err != nil {
 		return nil, err
@@ -20,8 +22,8 @@ func Keygen(size int) ([]byte, error) {
 
 // Password hashes a given password with a given salt.
 // It returns an hash of the given size.
-func Password(pass, salt []byte, size int) ([]byte, error) {
-	result, err := scrypt.Key(pass, salt, 1<<15, 8, 1, size)
+func Password(pass, salt []byte) ([]byte, error) {
+	result, err := scrypt.Key(pass, salt, 1<<15, 8, 1, digestSize)
 	if err != nil {
 		return nil, err
 	}
@@ -32,8 +34,8 @@ func Password(pass, salt []byte, size int) ([]byte, error) {
 //
 // Returns true if after hashing the given password with the given salt the output
 // hash of the given size is equal to the given hashed password. Else returns false.
-func PasswordCompare(pass []byte, salt []byte, size int, hashedPass []byte) (bool, error) {
-	result, err := scrypt.Key(pass, salt, 1<<15, 8, 1, size)
+func PasswordCompare(pass, salt, hashedPass []byte) (bool, error) {
+	result, err := scrypt.Key(pass, salt, 1<<15, 8, 1, digestSize)
 	if err != nil {
 		return false, err
 	}

@@ -7,39 +7,39 @@ import (
 )
 
 func TestKeygen(t *testing.T) {
-	const size = 64
-	key, err := hash.Keygen(size)
+	const digestSize = 64
+	key, err := hash.Keygen()
 	if err != nil {
 		t.Error("failed to generate hash:", err)
 	}
 
-	if got, exp := len(key), size; got != exp {
+	if got, exp := len(key), digestSize; got != exp {
 		t.Errorf("unexpected key size: got %v, expected %v", got, exp)
 	}
 }
 
 func TestPassword(t *testing.T) {
-	const size = 64
-	salt, _ := hash.Keygen(size)
-	key, err := hash.Password([]byte("password"), salt, size)
+	const digestSize = 64
+	salt, _ := hash.Keygen()
+	key, err := hash.Password([]byte("password"), salt)
 	if err != nil {
 		t.Error("failed to hash password:", err)
 	}
 
-	if got, exp := len(key), size; got != exp {
+	if got, exp := len(key), digestSize; got != exp {
 		t.Errorf("unexpected hash size: got %v, expected %v", got, exp)
 	}
 }
 
 func TestPasswordCompare(t *testing.T) {
-	const size = 64
-	salt, _ := hash.Keygen(size)
-	key, err := hash.Password([]byte("password"), salt, size)
+	const digestSize = 64
+	salt, _ := hash.Keygen()
+	key, err := hash.Password([]byte("password"), salt)
 	if err != nil {
 		t.Error("failed to hash password:", err)
 	}
 
-	if got, exp := len(key), size; got != exp {
+	if got, exp := len(key), digestSize; got != exp {
 		t.Errorf("unexpected hash size: got %v, expected %v", got, exp)
 	}
 
@@ -53,7 +53,7 @@ func TestPasswordCompare(t *testing.T) {
 			name:     "equal passwords",
 			password: []byte("password"),
 			hashedPassword: func() []byte {
-				key, _ := hash.Password([]byte("password"), salt, size)
+				key, _ := hash.Password([]byte("password"), salt)
 				return key
 			},
 			exp: true,
@@ -62,7 +62,7 @@ func TestPasswordCompare(t *testing.T) {
 			name:     "different passwords",
 			password: []byte("drowssap"),
 			hashedPassword: func() []byte {
-				key, _ := hash.Password([]byte("password"), salt, size)
+				key, _ := hash.Password([]byte("password"), salt)
 				return key
 			},
 			exp: false,
@@ -71,7 +71,7 @@ func TestPasswordCompare(t *testing.T) {
 
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
-			got, err := hash.PasswordCompare(tc.password, salt, size, tc.hashedPassword())
+			got, err := hash.PasswordCompare(tc.password, salt, tc.hashedPassword())
 			if err != nil {
 				t.Error("unexpected error when comparing hashed passwords:", err)
 			}
