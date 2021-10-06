@@ -17,7 +17,6 @@ func Sign(msg, key []byte) []byte {
 
 // Valid verifies if msg produces sig after signing.
 func Valid(msg, sig, key []byte) bool {
-	mac := hmac.New(SHA256.New, key)
-	digest := mac.Sum(msg)
+	digest := Sign(msg, key)
 	return hmac.Equal(sig, digest)
 }
