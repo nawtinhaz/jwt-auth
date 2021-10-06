@@ -2,10 +2,12 @@
 
 install-hooks:
 	go install mvdan.cc/gofumpt@v0.1.1
-	go install honnef.co/go/tools/cmd/staticcheck@v0.2.0
+	go install honnef.co/go/tools/cmd/staticcheck@v0.2.1
 	go install github.com/securego/gosec/v2/cmd/gosec@v2.8.1
+	go install golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow@v0.1.7
 	cp scripts/hooks/pre-commit.sh .git/hooks/pre-commit
 	cp scripts/hooks/pre-push.sh .git/hooks/pre-push
+
 check: fmt test static vet sec
 
 run: 
