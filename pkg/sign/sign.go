@@ -1,3 +1,4 @@
+// Package sign provides message signing and validation functionality.
 package sign
 
 import (
@@ -5,15 +6,18 @@ import (
 	"crypto/hmac"
 )
 
+// SHA256 is the hashing algorithm used for signing.
 const SHA256 = crypto.SHA256
 
-func Sign(message, key []byte) []byte {
+// Sign signs msg with key using hmac.
+func Sign(msg, key []byte) []byte {
 	mac := hmac.New(SHA256.New, key)
-	return mac.Sum(message)
+	return mac.Sum(msg)
 }
 
-func Valid(message, messageSigned, key []byte) bool {
+// Valid verifies if msg produces sig after signing.
+func Valid(msg, sig, key []byte) bool {
 	mac := hmac.New(SHA256.New, key)
-	digest := mac.Sum(message)
-	return hmac.Equal(messageSigned, digest)
+	digest := mac.Sum(msg)
+	return hmac.Equal(sig, digest)
 }
