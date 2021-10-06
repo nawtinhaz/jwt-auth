@@ -7,39 +7,36 @@ import (
 )
 
 func TestKeygen(t *testing.T) {
-	const digestSize = 64
 	key, err := hash.Keygen()
 	if err != nil {
 		t.Error("failed to generate hash:", err)
 	}
 
-	if got, exp := len(key), digestSize; got != exp {
+	if got, exp := len(key), hash.DigestSize; got != exp {
 		t.Errorf("unexpected key size: got %v, expected %v", got, exp)
 	}
 }
 
 func TestPassword(t *testing.T) {
-	const digestSize = 64
 	salt, _ := hash.Keygen()
 	key, err := hash.Password([]byte("password"), salt)
 	if err != nil {
 		t.Error("failed to hash password:", err)
 	}
 
-	if got, exp := len(key), digestSize; got != exp {
+	if got, exp := len(key), hash.DigestSize; got != exp {
 		t.Errorf("unexpected hash size: got %v, expected %v", got, exp)
 	}
 }
 
 func TestPasswordCompare(t *testing.T) {
-	const digestSize = 64
 	salt, _ := hash.Keygen()
 	key, err := hash.Password([]byte("password"), salt)
 	if err != nil {
 		t.Error("failed to hash password:", err)
 	}
 
-	if got, exp := len(key), digestSize; got != exp {
+	if got, exp := len(key), hash.DigestSize; got != exp {
 		t.Errorf("unexpected hash size: got %v, expected %v", got, exp)
 	}
 
