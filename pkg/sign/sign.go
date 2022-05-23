@@ -16,7 +16,10 @@ func Sign(msg, key []byte) []byte {
 }
 
 // Valid verifies if msg produces sig after signing.
-func Valid(msg, sig, key []byte) bool {
+func Valid(msg, sig, key []byte) error {
 	digest := Sign(msg, key)
-	return hmac.Equal(sig, digest)
+	if !hmac.Equal(sig, digest) {
+		return ErrInvalidSignature
+	}
+	return nil
 }

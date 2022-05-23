@@ -22,26 +22,26 @@ func TestValid(t *testing.T) {
 		name string
 		msg  []byte
 		sig  []byte
-		exp  bool
+		exp  error
 	}{
 		{
 			name: "message valid",
 			msg:  []byte(msg),
 			sig:  signature,
-			exp:  true,
+			exp:  nil,
 		},
 		{
 			name: "message invalid",
 			msg:  []byte("anothermessage"),
 			sig:  signature,
-			exp:  false,
+			exp:  sign.ErrInvalidSignature,
 		},
 	}
 
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
-			if got, exp := sign.Valid(tc.msg, tc.sig, key), tc.exp; got != exp {
-				t.Errorf("unexpected value when comparing macs: got %v, exp: %v", got, exp)
+			if err := sign.Valid(tc.msg, tc.sig, key); err != tc.exp {
+				t.Errorf("unexpected result when comparing macs: got %v, exp: %v", err, tc.exp)
 			}
 		})
 	}
