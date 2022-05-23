@@ -43,7 +43,6 @@ func VerifyClaims(key []byte, tokenBytes []byte) error {
 		return err
 	}
 
-	// or parse only claims
 	if err := jwt.ParseClaims(tokenBytes, verifier, &claims); err != nil {
 		return err
 	}
