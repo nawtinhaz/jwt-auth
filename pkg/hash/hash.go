@@ -2,8 +2,8 @@
 package hash
 
 import (
-	"bytes"
 	"crypto/rand"
+	"crypto/subtle"
 
 	"golang.org/x/crypto/scrypt"
 )
@@ -34,10 +34,13 @@ func Password(pass, salt []byte) ([]byte, error) {
 //
 // Returns true if after hashing the given password with the given salt the output
 // hash of the given size is equal to the given hashed password. Else returns false.
-func PasswordCompare(pass, salt, hashedPass []byte) (bool, error) {
+func PasswordCompare(pass, salt, hashedPass []byte) error {
 	result, err := scrypt.Key(pass, salt, 1<<15, 8, 1, DigestSize)
 	if err != nil {
-		return false, err
+		return err
 	}
-	return bytes.Equal(result, hashedPass), nil
+	if subtle.ConstantTimeCompare(result, hashedPass) != 1 {
+		return ErrMismatchedHashandPassword
+	}
+	return nil
 }

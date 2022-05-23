@@ -44,7 +44,7 @@ func TestPasswordCompare(t *testing.T) {
 		name           string
 		password       []byte
 		hashedPassword func() []byte
-		exp            bool
+		exp            error
 	}{
 		{
 			name:     "equal passwords",
@@ -53,7 +53,7 @@ func TestPasswordCompare(t *testing.T) {
 				key, _ := hash.Password([]byte("password"), salt)
 				return key
 			},
-			exp: true,
+			exp: nil,
 		},
 		{
 			name:     "different passwords",
@@ -62,19 +62,15 @@ func TestPasswordCompare(t *testing.T) {
 				key, _ := hash.Password([]byte("password"), salt)
 				return key
 			},
-			exp: false,
+			exp: hash.ErrMismatchedHashandPassword,
 		},
 	}
 
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
-			got, err := hash.PasswordCompare(tc.password, salt, tc.hashedPassword())
-			if err != nil {
+			err := hash.PasswordCompare(tc.password, salt, tc.hashedPassword())
+			if err != tc.exp {
 				t.Error("unexpected error when comparing hashed passwords:", err)
-			}
-
-			if tc.exp != got {
-				t.Errorf("unxpected comparison result for %q: got %v, exp %v", tc.name, got, tc.exp)
 			}
 		})
 	}
